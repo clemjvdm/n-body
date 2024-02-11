@@ -25,6 +25,7 @@ enum Method { // TODO: should this be typedef'd?
 
 particle_system createSystem(size_t particle_count, double grav_const);
 particle_system openSystem(char *filename);
+void saveSystem(particle_system system, char *filename);
 void initSystem(particle_system system, int x_bound, int y_bound);
 void updateSystem(particle_system system, int timestep, enum Method method);
 void pp(particle_system system,

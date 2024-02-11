@@ -29,41 +29,8 @@ int main(void) {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  /*particle_system system = createSystem(4, 0.00001);
-  particle p1;
-  p1.acc.x = -4;
-  p1.mass = 7;
-  p1.radius = 7;
-  p1.pos.x = -366;
-  p1.pos.y = -400;
-
-  particle p2;
-  p2.acc.x = 23;
-  p2.mass = 12;
-  p2.radius = 9;
-  p2.pos.x = 320;
-  p2.pos.y = -500;
-
-  particle p3;
-  p3.acc.x = -15;
-  p3.mass = 10;
-  p3.radius = 15;
-  p3.pos.x = 169;
-  p3.pos.x = 299;
-
-  particle p4;
-  p4.acc.x = 10;
-  p4.mass = 9;
-  p4.radius = 9;
-  p4.pos.x = -150;
-  p4.pos.y = 493;
-
-  system.particles[0] = p1;
-  system.particles[1] = p2;
-  system.particles[2] = p3;
-  system.particles[3] = p4;*/
-
-  particle_system system = openSystem("system.txt");
+  particle_system system = openSystem("system1.txt");
+  // saveSystem(system, "system1.txt");
 
   for (int i = 0; i < 4; i++) {
     particle p = system.particles[i];

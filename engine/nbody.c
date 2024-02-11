@@ -28,6 +28,19 @@ particle_system openSystem(char *filename) {
   return system;
 }
 
+void saveSystem(particle_system system, char *filename) {
+  FILE *fptr = fopen(filename, "w");
+  fprintf(fptr, "%lf %zd\n\n", system.grav_const, system.size);
+  for (int i = 0; i < system.size; i++) {
+    particle p = system.particles[i];
+    fprintf(fptr, "%lf %lf\n", p.mass, p.radius);
+    fprintf(fptr, "%lf %lf\n", p.pos.x, p.pos.y);
+    fprintf(fptr, "%lf %lf\n", p.vel.x, p.vel.y);
+    fprintf(fptr, "%lf %lf\n\n", p.acc.x, p.acc.y);
+  }
+  fclose(fptr);
+}
+
 double dist(particle a, particle b) { return mod(sub(a.pos, b.pos)); }
 
 void computeAcc(particle_system system) {
