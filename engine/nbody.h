@@ -6,23 +6,29 @@
 
 typedef struct {
   double mass;
+  double radius;
   vector pos;
   vector vel;
   vector acc;
 } particle;
 
-typedef particle *System;
+typedef struct {
+  particle *particles;
+  size_t size;
+  double grav_const;
+} particle_system;
 
 enum Method { // TODO: should this be typedef'd?
   PP,
   TC,
 };
 
-System createSystem(size_t particle_count);
-System openSystem(char *filename);
-void initSystem(System system, size_t size, int x_bound, int y_bound);
-void updateSystem(System system, size_t size, int timestep, enum Method method);
-void pp(System system, size_t size, int timestep); // particle-particle method
-void tc(System system);                            // tree code method
+particle_system createSystem(size_t particle_count, double grav_const);
+particle_system openSystem(char *filename);
+void initSystem(particle_system system, int x_bound, int y_bound);
+void updateSystem(particle_system system, int timestep, enum Method method);
+void pp(particle_system system,
+        int timestep);           // particle-particle method
+void tc(particle_system system); // tree code method
 
 #endif

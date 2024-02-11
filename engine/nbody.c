@@ -3,53 +3,81 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define GRAV_CONST 1
-
-System createSystem(size_t particle_count) {
-  return malloc(particle_count * sizeof(particle));
+particle_system createSystem(size_t particle_count, double grav_const) {
+  particle_system system;
+  system.size = particle_count;
+  system.grav_const = grav_const;
+  system.particles = malloc(particle_count * sizeof(particle));
+  return system;
 };
 
 double dist(particle a, particle b) { return mod(sub(a.pos, b.pos)); }
 
-void computeAcc(System system, size_t size) {
+void computeAcc(particle_system system) {
   vector zero = {0, 0};
-  system[0].acc = zero;
-  for (int i = 1; i < size; i++) {
-    system[i].acc = zero;
-    for (int j = i - 1; j >= 0; j--) {
-      particle a = system[i];
-      particle b = system[j];
+  particle *particles = system.particles;
 
-      vector acc =
-          scale((GRAV_CONST * a.mass * b.mass) /
-                    pow(dist(a, b), 3), // this can be sped up by not using mod
-                sub(a.pos, b.pos));
-      a.acc = add(a.acc, acc);
-      b.acc = add(a.acc, acc);
+  particles[0].acc = zero;
+  for (int i = 1; i < system.size; i++) {
+    particles[i].acc = zero;
+
+    for (int j = i - 1; j >= 0; j--) {
+      particle *a = &particles[i]; // access by reference to change acc
+      particle *b = &particles[j];
+
+      vector force =
+          scale((system.grav_const * a->mass * b->mass) /
+                    pow(dist(*a, *b), 3), // TODO: can pow(...) == 0? if so fix
+                sub(a->pos, b->pos)); // this can be sped up by not using mod
+
+      a->acc = add(a->acc, scale(-1, force)); // TODO: figure out why i have to
+                                              // scale a with -1 and not b
+      b->acc = add(b->acc, force);
     }
   }
 }
 
-void computeVel(System system, size_t size, int delta_t) {
-  for (int i = 0; i < size; i++)
-    system[i].vel = add(system[i].vel, scale(delta_t, system[i].acc));
+void resolveCollision(particle_system system) { // TODO: improve collisions
+  for (int i = 0; i < system.size - 1; i++) {
+    for (int j = i + 1; j < system.size; j++) {
+      particle *a = &system.particles[i];
+      particle *b = &system.particles[j];
+      if (dist(*a, *b) <= a->radius + b->radius) {
+        vector temp = a->vel;
+        a->vel = b->vel;
+        b->vel = scale(1, temp);
+      }
+    }
+  }
 }
 
-void computePos(System system, size_t size, int delta_t) {
-  for (int i = 0; i < size; i++)
-    system[i].pos = add(system[i].pos, scale(delta_t, system[i].vel));
+void computeVel(particle_system system, int delta_t) {
+  particle *particles = system.particles;
+  for (int i = 0; i < system.size; i++)
+    particles[i].vel = add(particles[i].vel, scale(delta_t, particles[i].acc));
 }
 
-void pp(System system, size_t size, int delta_t) {
-  computeAcc(system, size);
-  computeVel(system, size, delta_t);
-  computePos(system, size, delta_t);
+void computePos(particle_system system, int delta_t) {
+  particle *particles = system.particles;
+  for (int i = 0; i < system.size; i++) {
+    if (particles[i].pos.x !=
+        add(particles[i].pos, scale(delta_t, particles[i].vel)).x) {
+    }
+    particles[i].pos = add(particles[i].pos, scale(delta_t, particles[i].vel));
+  }
 }
 
-void updateSystem(System system, size_t size, int delta_t, enum Method method) {
+void pp(particle_system system, int delta_t) {
+  computeAcc(system);
+  computeVel(system, delta_t);
+  computePos(system, delta_t);
+  resolveCollision(system);
+}
+
+void updateSystem(particle_system system, int delta_t, enum Method method) {
   switch (method) {
   case PP:
-    pp(system, size, delta_t);
+    pp(system, delta_t);
     break;
   case TC:
     break;

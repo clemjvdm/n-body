@@ -11,6 +11,8 @@ vector add(vector a, vector b) {
   return v;
 }
 
+int equal(vector a, vector b) { return (a.x == b.x && a.y == b.y); }
+
 vector sub(vector a, vector b) {
   vector v = {a.x - b.x, a.y - b.y};
   return v;
