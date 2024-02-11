@@ -29,7 +29,7 @@ int main(void) {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  particle_system system = createSystem(4, 0.00001);
+  /*particle_system system = createSystem(4, 0.00001);
   particle p1;
   p1.acc.x = -4;
   p1.mass = 7;
@@ -61,8 +61,15 @@ int main(void) {
   system.particles[0] = p1;
   system.particles[1] = p2;
   system.particles[2] = p3;
-  system.particles[3] = p4;
+  system.particles[3] = p4;*/
 
+  particle_system system = openSystem("system.txt");
+
+  for (int i = 0; i < 4; i++) {
+    particle p = system.particles[i];
+    printf("p%d\nmass: %lf\nradius: %lf\npos.x: %lf\npos.y: %lf\n", i, p.mass,
+           p.radius, p.pos.x, p.pos.y);
+  }
   while (1) {
     // handle quit
     if (SDL_PollEvent(&event) && event.type == SDL_QUIT)

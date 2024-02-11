@@ -1,6 +1,7 @@
 #include "nbody.h"
 #include "vector.h"
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 particle_system createSystem(size_t particle_count, double grav_const) {
@@ -10,6 +11,22 @@ particle_system createSystem(size_t particle_count, double grav_const) {
   system.particles = malloc(particle_count * sizeof(particle));
   return system;
 };
+
+particle_system openSystem(char *filename) {
+  FILE *fptr = fopen(filename, "r");
+  particle_system system;
+  fscanf(fptr, "%lf%zd", &system.grav_const, &system.size);
+  system.particles = malloc(system.size * sizeof(particle));
+  for (int i = 0; i < system.size; i++) {
+    particle *p = &system.particles[i];
+    fscanf(fptr, "%lf%lf", &(p->mass), &(p->radius));
+    fscanf(fptr, "%lf%lf", &(p->pos.x), &(p->pos.y));
+    fscanf(fptr, "%lf%lf", &(p->vel.x), &(p->vel.y));
+    fscanf(fptr, "%lf%lf", &(p->acc.x), &(p->acc.y));
+  }
+  fclose(fptr);
+  return system;
+}
 
 double dist(particle a, particle b) { return mod(sub(a.pos, b.pos)); }
 
