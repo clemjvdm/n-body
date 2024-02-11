@@ -29,7 +29,9 @@ int main(void) {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  particle_system system = openSystem("system1.txt");
+  particle_system system =
+      createSystem(100, 0.00001); // openSystem("system.txt");
+  initSystem(system, 800);
   // saveSystem(system, "system1.txt");
 
   for (int i = 0; i < 4; i++) {
@@ -55,6 +57,8 @@ int main(void) {
     // update logic
     updateSystem(system, 5, PP);
   }
+
+  saveSystem(system, "system_saved.txt");
 
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

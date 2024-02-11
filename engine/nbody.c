@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define PI 3.14159265358979323846
+
 particle_system createSystem(size_t particle_count, double grav_const) {
   particle_system system;
   system.size = particle_count;
@@ -41,6 +43,22 @@ void saveSystem(particle_system system, char *filename) {
   fclose(fptr);
 }
 
+float randFloat(int max) { return (float)rand() / (float)(RAND_MAX / max); }
+
+void initSystem(particle_system system, int radius) {
+  for (int i = 0; i < system.size; i++) {
+    vector zero = {0, 0};
+    float distance = randFloat(radius);
+    float angle = randFloat(1) * 2 * PI;
+    system.particles[i].pos.x = cos(angle) * distance;
+    system.particles[i].pos.y = sin(angle) * distance;
+    system.particles[i].vel = zero;
+    system.particles[i].acc = zero;
+    system.particles[i].radius = 5;
+    system.particles[i].mass = 5;
+  }
+}
+
 double dist(particle a, particle b) { return mod(sub(a.pos, b.pos)); }
 
 void computeAcc(particle_system system) {
@@ -67,14 +85,15 @@ void computeAcc(particle_system system) {
   }
 }
 
-void resolveCollision(particle_system system) { // TODO: improve collisions
-  for (int i = 0; i < system.size - 1; i++) {
+void resolveCollision(particle_system system) {
+  for (int i = 0; i < system.size - 1;
+       i++) { // TODO: faster way to check for collisions?
     for (int j = i + 1; j < system.size; j++) {
       particle *a = &system.particles[i];
       particle *b = &system.particles[j];
       if (dist(*a, *b) <= a->radius + b->radius) {
         vector temp = a->vel;
-        a->vel = b->vel;
+        a->vel = scale(1, b->vel); // TODO: momentum conservation?
         b->vel = scale(1, temp);
       }
     }
