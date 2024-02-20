@@ -73,13 +73,17 @@ void computeAcc(particle_system system) {
       particle *a = &particles[i]; // access by reference to change acc
       particle *b = &particles[j];
 
+      vector s = sub(a->pos, b->pos);
+      double temp = s.x * s.x + s.y * s.y;
+
       vector force =
-          scale((system.grav_const * a->mass * b->mass) /
-                    pow(dist(*a, *b), 3), // TODO: can pow(...) == 0? if so fix
+          scale((system.grav_const * a->mass * b->mass) / pow(dist(*a, *b), 3),
                 sub(a->pos, b->pos)); // this can be sped up by not using mod
 
-      a->acc = add(a->acc, scale(-1, force)); // TODO: figure out why i have to
-                                              // scale a with -1 and not b
+      force = (isnan(force.x) ? zero
+                              : force); // if a.pos == b.pos, no force applied
+
+      a->acc = add(a->acc, scale(-1, force));
       b->acc = add(b->acc, force);
     }
   }
@@ -119,8 +123,8 @@ void computePos(particle_system system, int delta_t) {
 void pp(particle_system system, int delta_t) {
   computeAcc(system);
   computeVel(system, delta_t);
-  computePos(system, delta_t);
   resolveCollision(system);
+  computePos(system, delta_t);
 }
 
 void updateSystem(particle_system system, int delta_t, enum Method method) {

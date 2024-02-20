@@ -29,27 +29,21 @@ int main(void) {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  particle_system system =
-      createSystem(100, 0.00001); // openSystem("system.txt");
-  initSystem(system, 800);
-  // saveSystem(system, "system1.txt");
+  particle_system system = createSystem(100, 0.0001);
+  // particle_system system = openSystem("system.txt");
+  initSystem(system, 1200);
 
-  for (int i = 0; i < 4; i++) {
-    particle p = system.particles[i];
-    printf("p%d\nmass: %lf\nradius: %lf\npos.x: %lf\npos.y: %lf\n", i, p.mass,
-           p.radius, p.pos.x, p.pos.y);
-  }
   while (1) {
     // handle quit
     if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
       break;
 
     // clear screen
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_SetRenderDrawColor(renderer, 199, 198, 185, 0);
     SDL_RenderClear(renderer);
 
     // draw
-    SDL_SetRenderDrawColor(renderer, 255, 20, 147, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     for (int i = 0; i < system.size; i++)
       drawParticle(renderer, system.particles[i]);
     SDL_RenderPresent(renderer);

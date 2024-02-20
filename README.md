@@ -17,3 +17,10 @@
 \> can run a Barnes-Hut approximation for an N-body simulation
 
 \> can export simulation data to csv
+
+
+### Going Forward
+
+\> formal validation for n-body functions
+\> random momentum, mass and radius when initializing particles?
+\> bh
