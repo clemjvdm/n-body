@@ -13,7 +13,7 @@
 
 void drawParticle(SDL_Renderer *renderer, particle p) {
   circleFill(renderer, (int)p.pos.x + (int)WINDOW_WIDTH / 2,
-             (int)p.pos.y + (int)WINDOW_HEIGHT / 2, p.radius);
+             -(int)p.pos.y + (int)WINDOW_HEIGHT / 2, p.radius);
 }
 
 int main(void) {
@@ -29,9 +29,9 @@ int main(void) {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  particle_system system = createSystem(100, 0.0001);
+  particle_system system = createSystem(2, 0.01);
   // particle_system system = openSystem("system.txt");
-  initSystem(system, 1200);
+  initSystem(system, 800);
 
   while (1) {
     // handle quit
@@ -49,7 +49,7 @@ int main(void) {
     SDL_RenderPresent(renderer);
 
     // update logic
-    updateSystem(system, 5, PP);
+    updateSystem(system, 1, PP);
   }
 
   saveSystem(system, "system_saved.txt");

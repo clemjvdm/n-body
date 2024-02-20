@@ -54,7 +54,7 @@ void initSystem(particle_system system, int radius) {
     system.particles[i].pos.y = sin(angle) * distance;
     system.particles[i].vel = zero;
     system.particles[i].acc = zero;
-    system.particles[i].radius = 5;
+    system.particles[i].radius = 100;
     system.particles[i].mass = 5;
   }
 }
@@ -104,6 +104,57 @@ void resolveCollision(particle_system system) {
   }
 }
 
+void resolveCollisionPriori(particle_system system) {
+  for (int i = 0; i < system.size - 1; i++) {
+    for (int j = i + 1; j < system.size; j++) {
+      vector p1 = system.particles[i].pos;
+      vector p2 = system.particles[j].pos;
+      vector v1 = system.particles[i].vel;
+      vector v2 = system.particles[j].vel;
+      double r1 = system.particles[i].radius;
+      double r2 = system.particles[j].radius;
+
+      double a = (p1.x * p1.x) + (p2.x * p2.x) - 2 * p1.x * p2.x;
+      double b = (p1.y * p1.y) + (p2.y * p2.y) - 2 * p1.y * p2.y;
+      double c = (p1.x - p2.x) * (v1.x - v2.x) + (p1.y - p2.y) * (v1.y - v2.y);
+      double d = (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y);
+      double e = a + b - r1 * r1 - r2 * r2 - 2 * r1 * r2;
+      double delta = 4 * (c * c) - 4 * d * e;
+
+      if (delta == 0) {
+        double p = -1 * (c / d);
+        if (p >= 0 && p <= 1) {
+          scale(p, system.particles[i].vel);
+          scale(p, system.particles[j].vel);
+        }
+      }
+      if (delta > 0) {
+        double p = (-2 * c - sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);
+        if (p >= 0 && p <= 1) {
+          vector temp = system.particles[i].vel;
+          system.particles[i].vel = scale(
+              .5,
+              system.particles[j]
+                  .vel); // for these to be accurate, we know velocity at t1 =
+                         // v1, and we know the current distance between the two
+                         // particles. If we immediately handle the collision,
+                         // this particle will fast forward in time, as they
+                         // will have gone through the current v1, and the new
+                         // velocity we created for the collision. Thats like 2
+                         // timesteps. Instead we remove |v1| from |v2|
+          system.particles[j].vel = scale(.5, system.particles[j].vel);
+        } else {
+          p = (-2 * c + sqrt(4 * (c * c) - 4 * d * e)) / 2 * d;
+          if (p >= 0 && p <= 1) {
+            scale(p, system.particles[i].vel);
+            scale(p, system.particles[j].vel);
+          }
+        }
+      }
+    }
+  }
+}
+
 void computeVel(particle_system system, int delta_t) {
   particle *particles = system.particles;
   for (int i = 0; i < system.size; i++)
@@ -121,10 +172,10 @@ void computePos(particle_system system, int delta_t) {
 }
 
 void pp(particle_system system, int delta_t) {
+  computePos(system, delta_t);
   computeAcc(system);
   computeVel(system, delta_t);
-  resolveCollision(system);
-  computePos(system, delta_t);
+  resolveCollisionPriori(system);
 }
 
 void updateSystem(particle_system system, int delta_t, enum Method method) {
