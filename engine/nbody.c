@@ -32,7 +32,6 @@ particle_system openSystem(char *filename) {
 
 void saveSystem(particle_system system, char *filename) {
   FILE *fptr = fopen(filename, "w");
-  fprintf(fptr, "%lf %zd\n\n", system.grav_const, system.size);
   for (int i = 0; i < system.size; i++) {
     particle p = system.particles[i];
     fprintf(fptr, "%lf %lf\n", p.mass, p.radius);
@@ -54,7 +53,7 @@ void initSystem(particle_system system, int radius) {
     system.particles[i].pos.y = sin(angle) * distance;
     system.particles[i].vel = zero;
     system.particles[i].acc = zero;
-    system.particles[i].radius = 100;
+    system.particles[i].radius = 10;
     system.particles[i].mass = 5;
   }
 }
@@ -104,6 +103,78 @@ void resolveCollision(particle_system system) {
   }
 }
 
+double find_toc(particle f, particle g) {
+    vector p1 = f.pos;
+    vector p2 = g.pos;
+    vector v1 = f.vel;
+    vector v2 = g.vel;
+    double r1 = f.radius;
+    double r2 = g.radius;
+
+    double a = (p1.x * p1.x) + (p2.x * p2.x) - 2 * p1.x * p2.x;
+    double b = (p1.y * p1.y) + (p2.y * p2.y) - 2 * p1.y * p2.y;
+    double c = (p1.x - p2.x) * (v1.x - v2.x) + (p1.y - p2.y) * (v1.y - v2.y);
+    double d = (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y);
+    double e = a + b - r1 * r1 - r2 * r2 - 2 * r1 * r2;
+    double delta = 4 * (c * c) - 4 * d * e;
+
+    if (delta == 0) {
+        return -1 * (c/d);
+    }
+
+    if (delta > 0) {
+        return (-2 * c - sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);
+    }
+
+    return -1;
+}
+
+void update_positions(particle_system system, int delta_t) {
+    if (delta_t == 0) { return; }
+  particle *particles = system.particles;
+  for (int i = 0; i < system.size; i++) {
+    particles[i].pos = add(particles[i].pos, scale(delta_t, particles[i].vel));
+  }
+}
+
+
+// TODO: better naming?
+// function updates positions taking into accout collisions
+void update_positions_collisions(particle_system system, int delta_t) {
+    double min_p = -1;
+    int min_i = 0;
+    int min_j = 0;
+    for (int i=0; i<system.size - 1; i++) {
+        for (int j=i+1; j<system.size; j++) {
+            double p = find_toc(system.particles[i],system.particles[j]);
+            printf("p: %lf\n", p);
+            if (min_p == -1 && p >= 0) {   // TODO: is this the right approach? Ensures we pass a -1, if no collision which is more correct, but requires this if statement at every iter
+                min_p = p;
+                min_i = i;
+                min_j = j;
+            } else if (p < min_p && 0 < p) {
+                min_p = p;
+                min_i = i;
+                min_j = j;
+            } 
+        }
+    }
+
+    if (0 <= min_p && min_p <= delta_t) {
+        printf("min_p: %lf\n",min_p);
+        update_positions(system, min_p);
+        delta_t = delta_t - min_p;
+        // here update velocities after collision
+        vector temp = system.particles[min_i].vel;
+        system.particles[min_i].vel = system.particles[min_j].vel;
+        system.particles[min_j].vel = temp;
+        //
+        update_positions_collisions(system, delta_t);
+    } else {
+        update_positions(system, delta_t);
+    }
+}
+
 void resolveCollisionPriori(particle_system system) {
   for (int i = 0; i < system.size - 1; i++) {
     for (int j = i + 1; j < system.size; j++) {
@@ -132,8 +203,17 @@ void resolveCollisionPriori(particle_system system) {
         double p = (-2 * c - sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);
         if (p >= 0 && p <= 1) {
           vector temp = system.particles[i].vel;
-          system.particles[i].vel = scale(
-              .5,
+          system.particles[i].pos =
+              add(system.particles[i].pos,
+                  scale(p - 0.01, system.particles[i].vel));
+          system.particles[j].pos =
+              add(system.particles[j].pos,
+                  scale(p - 0.01, system.particles[j].vel));
+          system.particles[i].vel = scale(1, system.particles[j].vel);
+          system.particles[j].vel = scale(1, temp);
+
+          /*system.particles[i].vel = scale(
+              0,
               system.particles[j]
                   .vel); // for these to be accurate, we know velocity at t1 =
                          // v1, and we know the current distance between the two
@@ -142,9 +222,9 @@ void resolveCollisionPriori(particle_system system) {
                          // will have gone through the current v1, and the new
                          // velocity we created for the collision. Thats like 2
                          // timesteps. Instead we remove |v1| from |v2|
-          system.particles[j].vel = scale(.5, system.particles[j].vel);
+          system.particles[j].vel = scale(0, temp);*/
         } else {
-          p = (-2 * c + sqrt(4 * (c * c) - 4 * d * e)) / 2 * d;
+          p = (-2 * c + sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);
           if (p >= 0 && p <= 1) {
             scale(p, system.particles[i].vel);
             scale(p, system.particles[j].vel);
@@ -172,10 +252,11 @@ void computePos(particle_system system, int delta_t) {
 }
 
 void pp(particle_system system, int delta_t) {
-  computePos(system, delta_t);
+    update_positions_collisions(system, delta_t);
+  // computePos(system, delta_t);
   computeAcc(system);
   computeVel(system, delta_t);
-  resolveCollisionPriori(system);
+  // resolveCollisionPriori(system);
 }
 
 void updateSystem(particle_system system, int delta_t, enum Method method) {

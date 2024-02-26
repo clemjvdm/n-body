@@ -29,7 +29,7 @@ int main(void) {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  particle_system system = createSystem(2, 0.01);
+  particle_system system = createSystem(100, 0.01);
   // particle_system system = openSystem("system.txt");
   initSystem(system, 800);
 
