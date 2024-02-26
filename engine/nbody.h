@@ -31,5 +31,6 @@ void updateSystem(particle_system system, int timestep, enum Method method);
 void pp(particle_system system,
         int timestep);           // particle-particle method
 void tc(particle_system system); // tree code method
+void remove_intersections(particle_system *system);
 
 #endif

@@ -137,6 +137,27 @@ void update_positions(particle_system system, int delta_t) {
   }
 }
 
+void remove_particle(particle_system *system, int particle_index) {
+    for (int j = particle_index; j < system->size-1; j++) {
+        system->particles[j] = system->particles[j+1];
+    } 
+    system->size--;
+}
+
+void remove_intersections(particle_system *system) {
+    for (int i=0; i<system->size - 1; i++) {
+        for (int j=i+1; j<system->size; j++) {
+            particle a = system->particles[i];
+            particle b = system->particles[j];
+            if (sqrt(((a.pos.x - b.pos.x)*(a.pos.x - b.pos.x)) + 
+                     ((a.pos.y - b.pos.y)*(a.pos.y - b.pos.y))) <= a.radius + b.radius) {
+                printf("particle removed\n");
+                remove_particle(system, j);
+            }
+        }
+    }
+}
+
 
 // TODO: better naming?
 // function updates positions taking into accout collisions
@@ -147,7 +168,6 @@ void update_positions_collisions(particle_system system, int delta_t) {
     for (int i=0; i<system.size - 1; i++) {
         for (int j=i+1; j<system.size; j++) {
             double p = find_toc(system.particles[i],system.particles[j]);
-            printf("p: %lf\n", p);
             if (min_p == -1 && p >= 0) {   // TODO: is this the right approach? Ensures we pass a -1, if no collision which is more correct, but requires this if statement at every iter
                 min_p = p;
                 min_i = i;
@@ -161,7 +181,6 @@ void update_positions_collisions(particle_system system, int delta_t) {
     }
 
     if (0 <= min_p && min_p <= delta_t) {
-        printf("min_p: %lf\n",min_p);
         update_positions(system, min_p);
         delta_t = delta_t - min_p;
         // here update velocities after collision
