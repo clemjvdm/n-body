@@ -16,7 +16,7 @@ Finally you should be able to run it with `./nbody`.
 ### To-Do
 
 1. Documentation
-   1. fix makefile and document how to run code
+   1. ~~fix makefile and document how to run code~~
    2. document general code structure
    3. document different collision detection algorithms
    4. explain integer based arithmetic midpoint circle algorithm, and how it can be derived
