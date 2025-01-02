@@ -11,7 +11,7 @@ git clone git@github.com:clemjvdm/n-body.git
 cd n-body
 make
 ```
-Finally you should be able to run it with `./nbody`
+Finally you should be able to run it with `./nbody`.
 
 ### To-Do
 
