@@ -12,6 +12,7 @@ So the I will start documenting, cleaning up and maybe even extending the code. 
    3. document different collision detection algorithms
    4. explain integer based arithmetic midpoint circle algorithm, and how it can be derived
    5. discuss time complexity and efficiency of all parts of code
+   6. overview of implemented features
 2. Clean up code
    1. better inline documentation
    2. refactor some complex structures
