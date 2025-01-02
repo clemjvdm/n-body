@@ -4,6 +4,14 @@ An exploration of n-body simulations and related algorithms. I started this repo
 
 So the I will start documenting, cleaning up and maybe even extending the code. A list of things I am aiming to do and their progress can be found in the To-do section.
 
+### Running the code
+First ensure you have SDL2 (Simple DirectMedia Layer) installed (alongside gcc, make and git). After this you should be able to download, compile and run the code with the following commands:
+```
+git clone git@github.com:clemjvdm/n-body.git
+cd n-body
+make
+```
+
 ### To-Do
 
 1. Documentation
