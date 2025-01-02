@@ -11,6 +11,15 @@
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
+/**
+ * Draws a particle on the screen as a filled circle relative to the center of the window.
+ *
+ * @param renderer  The SDL renderer context used for drawing
+ * @param p The particle to be drawn, containing position and radius
+ *
+ * @note Position (0,0) will be drawn at the center of the window
+ * @note Y-coordinate is inverted (negative y moves up)
+ */
 void drawParticle(SDL_Renderer *renderer, particle p) {
   circleFill(renderer, (int)p.pos.x + (int)WINDOW_WIDTH / 2,
              -(int)p.pos.y + (int)WINDOW_HEIGHT / 2, p.radius);
