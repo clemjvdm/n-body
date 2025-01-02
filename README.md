@@ -13,11 +13,15 @@ make
 ```
 Finally you should be able to run it with `./nbody`.
 
+### Code structure
+
+The code is broken down into two directories; `engine` and `graphics`. The `engine` directory contains algorithms used to perfrom an n-body simulation. The `graphics` directory contains algorithms to graphically represent a simulation, using SDL2. Finally, the `main.c` file ties these algorithms together to create a visual n-body simulation.
+
 ### To-Do
 
 1. Documentation
    1. ~~fix makefile and document how to run code~~
-   2. document general code structure
+   2. ~~document general code structure~~
    3. document different collision detection algorithms
    4. explain integer based arithmetic midpoint circle algorithm, and how it can be derived
    5. discuss time complexity and efficiency of all parts of code
