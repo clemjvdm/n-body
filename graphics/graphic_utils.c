@@ -4,6 +4,14 @@
 // forget
 // TODO: this function can be further optimized by making single api call using
 // SLD_RenderDrawPoints
+/**
+ * Draw a circle to an SDL renderer. 
+ *
+ * @param renderer SDL renderer
+ * @param center_x center x coordinate of cirlce
+ * @param center_y center y coordinate of circle
+ * @param radius  radius of circle
+ */
 void circle(SDL_Renderer *renderer, int center_x, int center_y, int radius) {
   int x = radius - 1;
   int y = 0;
@@ -33,6 +41,14 @@ void circle(SDL_Renderer *renderer, int center_x, int center_y, int radius) {
   }
 }
 
+/**
+ * Draw a filled circle to an SDL renderer. 
+ *
+ * @param renderer SDL renderer
+ * @param center_x center x coordinate of cirlce
+ * @param center_y center y coordinate of circle
+ * @param radius  radius of circle
+ */
 void circleFill(SDL_Renderer *renderer, int center_x, int center_y,
                 int radius) {
   int x = radius - 1;

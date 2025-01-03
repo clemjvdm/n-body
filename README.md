@@ -27,7 +27,7 @@ The code is broken down into two directories; `engine` and `graphics`. The `engi
    5. discuss time complexity and efficiency of all parts of code
    6. overview of implemented features
 2. Clean up code
-   1. better inline documentation
+   1. ~~better inline documentation~~
    2. refactor some complex structures
 3. Features
    1. QoL

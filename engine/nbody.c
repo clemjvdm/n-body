@@ -99,6 +99,15 @@ void initSystem(particle_system system, int radius) {
  */
 double dist(particle a, particle b) { return mod(sub(a.pos, b.pos)); }
 
+/**
+ * Updates the acceleration of all particles within a system, taking into account
+ * their current acceleration. This is accomplished by calculating the force
+ * between the two particles.
+ *
+ * @param system  The particle system to update
+ *
+ * NOTE: This function could be formally proven
+ */
 void computeAcc(particle_system system) {
   vector zero = {0, 0};
   particle *particles = system.particles;
@@ -127,6 +136,14 @@ void computeAcc(particle_system system) {
   }
 }
 
+/**
+ * This function resolves collisions by checking for overalapped particles
+ * and modifying their velocities appropriately.
+ *
+ * @param system  The particle system to update
+ *
+ * NOTE: This function could be formally proven
+ */
 void resolveCollision(particle_system system) {
   for (int i = 0; i < system.size - 1;
        i++) { // TODO: faster way to check for collisions?
@@ -142,6 +159,15 @@ void resolveCollision(particle_system system) {
   }
 }
 
+/**
+ * This function finds the time of collision between two particles.
+ * It returns -1 if their will not collide given current system parameters.
+ * This is useful for a priori collision detection.
+ * TODO: explain how this works in readme.
+ *
+ * @param f First particle
+ * @param g Second particle
+ */
 double find_toc(particle f, particle g) {
     vector p1 = f.pos;
     vector p2 = g.pos;
@@ -168,14 +194,28 @@ double find_toc(particle f, particle g) {
     return -1;
 }
 
+/**
+ * Update the positions of particles within a system based on their
+ * velocity.
+ *
+ * @param system  The particle system to update
+ * @param delta_t The time step
+ */
 void update_positions(particle_system system, int delta_t) {
-    if (delta_t == 0) { return; }
+  if (delta_t == 0) { return; }
   particle *particles = system.particles;
   for (int i = 0; i < system.size; i++) {
     particles[i].pos = add(particles[i].pos, scale(delta_t, particles[i].vel));
   }
 }
 
+
+/**
+ * Remove a particle from a system by index.
+ *
+ * @param system  The system from which to remove a particle
+ * @param particle_index  The index of the particle to remove
+ */
 void remove_particle(particle_system *system, int particle_index) {
     for (int j = particle_index; j < system->size-1; j++) {
         system->particles[j] = system->particles[j+1];
@@ -183,6 +223,12 @@ void remove_particle(particle_system *system, int particle_index) {
     system->size--;
 }
 
+/**
+ * Removes intersecting particles from a system. This is used so that
+ * an a priori collision detection algorithm can safely be used afterwards.
+ *
+ * @param system  The system for which to remove all intersecting particles
+ */
 void remove_intersections(particle_system *system) {
     for (int i=0; i<system->size - 1; i++) {
         for (int j=i+1; j<system->size; j++) {
@@ -198,12 +244,23 @@ void remove_intersections(particle_system *system) {
 }
 
 
+/**
+ * Update the positions of particles within a system, taking collisions
+ * into account. 
+ *
+ * @param system  The particle system to update
+ * @param delta_t The time step
+ *
+ * @note This is a recursive func
+ */
 // TODO: better naming?
-// function updates positions taking into accout collisions
 void update_positions_collisions(particle_system system, int delta_t) {
     double min_p = -1;
     int min_i = 0;
     int min_j = 0;
+
+    // find the first collision which will take place in the system.
+    // -1 if none.
     for (int i=0; i<system.size - 1; i++) {
         for (int j=i+1; j<system.size; j++) {
             double p = find_toc(system.particles[i],system.particles[j]);
@@ -220,97 +277,119 @@ void update_positions_collisions(particle_system system, int delta_t) {
     }
 
     if (0 <= min_p && min_p <= delta_t) {
-        update_positions(system, min_p);
-        delta_t = delta_t - min_p;
-        // here update velocities after collision
+        update_positions(system, min_p); // update positions until the first collision
+        delta_t = delta_t - min_p; // compute the new delta_t (amount of time left in the jump)
+
+        // update velocities for colliding particles
         vector temp = system.particles[min_i].vel;
         system.particles[min_i].vel = system.particles[min_j].vel;
         system.particles[min_j].vel = temp;
         //
-        update_positions_collisions(system, delta_t);
+        update_positions_collisions(system, delta_t); // recusively call this function with new detla_t
     } else {
         update_positions(system, delta_t);
     }
 }
 
-void resolveCollisionPriori(particle_system system) {
-  for (int i = 0; i < system.size - 1; i++) {
-    for (int j = i + 1; j < system.size; j++) {
-      vector p1 = system.particles[i].pos;
-      vector p2 = system.particles[j].pos;
-      vector v1 = system.particles[i].vel;
-      vector v2 = system.particles[j].vel;
-      double r1 = system.particles[i].radius;
-      double r2 = system.particles[j].radius;
+/**
+ * Resolves the collisions within a system using an a priori method.
+ * Not certain why this exists and I don't think it's being referenced anywhere else in the code.
+ */
+/*void resolveCollisionPriori(particle_system system) {*/
+/*  for (int i = 0; i < system.size - 1; i++) {*/
+/*    for (int j = i + 1; j < system.size; j++) {*/
+/*      vector p1 = system.particles[i].pos;*/
+/*      vector p2 = system.particles[j].pos;*/
+/*      vector v1 = system.particles[i].vel;*/
+/*      vector v2 = system.particles[j].vel;*/
+/*      double r1 = system.particles[i].radius;*/
+/*      double r2 = system.particles[j].radius;*/
+/**/
+/*      double a = (p1.x * p1.x) + (p2.x * p2.x) - 2 * p1.x * p2.x;*/
+/*      double b = (p1.y * p1.y) + (p2.y * p2.y) - 2 * p1.y * p2.y;*/
+/*      double c = (p1.x - p2.x) * (v1.x - v2.x) + (p1.y - p2.y) * (v1.y - v2.y);*/
+/*      double d = (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y);*/
+/*      double e = a + b - r1 * r1 - r2 * r2 - 2 * r1 * r2;*/
+/*      double delta = 4 * (c * c) - 4 * d * e;*/
+/**/
+/*      if (delta == 0) {*/
+/*        double p = -1 * (c / d);*/
+/*        if (p >= 0 && p <= 1) {*/
+/*          scale(p, system.particles[i].vel);*/
+/*          scale(p, system.particles[j].vel);*/
+/*        }*/
+/*      }*/
+/*      if (delta > 0) {*/
+/*        double p = (-2 * c - sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);*/
+/*        if (p >= 0 && p <= 1) {*/
+/*          vector temp = system.particles[i].vel;*/
+/*          system.particles[i].pos =*/
+/*              add(system.particles[i].pos,*/
+/*                  scale(p - 0.01, system.particles[i].vel));*/
+/*          system.particles[j].pos =*/
+/*              add(system.particles[j].pos,*/
+/*                  scale(p - 0.01, system.particles[j].vel));*/
+/*          system.particles[i].vel = scale(1, system.particles[j].vel);*/
+/*          system.particles[j].vel = scale(1, temp);*/
+/**/
+/*          /*system.particles[i].vel = scale(*/
+/*              0,*/
+/*              system.particles[j]*/
+/*                  .vel); // for these to be accurate, we know velocity at t1 =*/
+/*                         // v1, and we know the current distance between the two*/
+/*                         // particles. If we immediately handle the collision,*/
+/*                         // this particle will fast forward in time, as they*/
+/*                         // will have gone through the current v1, and the new*/
+/*                         // velocity we created for the collision. Thats like 2*/
+/*                         // timesteps. Instead we remove |v1| from |v2|*/
+/*          system.particles[j].vel = scale(0, temp);*/
+/*        } else {*/
+/*          p = (-2 * c + sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);*/
+/*          if (p >= 0 && p <= 1) {*/
+/*            scale(p, system.particles[i].vel);*/
+/*            scale(p, system.particles[j].vel);*/
+/*          }*/
+/*        }*/
+/*      }*/
+/*    }*/
+/*  }*/
+/*}*/
 
-      double a = (p1.x * p1.x) + (p2.x * p2.x) - 2 * p1.x * p2.x;
-      double b = (p1.y * p1.y) + (p2.y * p2.y) - 2 * p1.y * p2.y;
-      double c = (p1.x - p2.x) * (v1.x - v2.x) + (p1.y - p2.y) * (v1.y - v2.y);
-      double d = (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y);
-      double e = a + b - r1 * r1 - r2 * r2 - 2 * r1 * r2;
-      double delta = 4 * (c * c) - 4 * d * e;
 
-      if (delta == 0) {
-        double p = -1 * (c / d);
-        if (p >= 0 && p <= 1) {
-          scale(p, system.particles[i].vel);
-          scale(p, system.particles[j].vel);
-        }
-      }
-      if (delta > 0) {
-        double p = (-2 * c - sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);
-        if (p >= 0 && p <= 1) {
-          vector temp = system.particles[i].vel;
-          system.particles[i].pos =
-              add(system.particles[i].pos,
-                  scale(p - 0.01, system.particles[i].vel));
-          system.particles[j].pos =
-              add(system.particles[j].pos,
-                  scale(p - 0.01, system.particles[j].vel));
-          system.particles[i].vel = scale(1, system.particles[j].vel);
-          system.particles[j].vel = scale(1, temp);
-
-          /*system.particles[i].vel = scale(
-              0,
-              system.particles[j]
-                  .vel); // for these to be accurate, we know velocity at t1 =
-                         // v1, and we know the current distance between the two
-                         // particles. If we immediately handle the collision,
-                         // this particle will fast forward in time, as they
-                         // will have gone through the current v1, and the new
-                         // velocity we created for the collision. Thats like 2
-                         // timesteps. Instead we remove |v1| from |v2|
-          system.particles[j].vel = scale(0, temp);*/
-        } else {
-          p = (-2 * c + sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);
-          if (p >= 0 && p <= 1) {
-            scale(p, system.particles[i].vel);
-            scale(p, system.particles[j].vel);
-          }
-        }
-      }
-    }
-  }
-}
-
+/**
+ * Update the velocity of particles within a system, based on their acceleration and
+ * a time step.
+ *
+ * @param system  The system to update
+ * @param delta_t The time step
+ */
 void computeVel(particle_system system, int delta_t) {
   particle *particles = system.particles;
   for (int i = 0; i < system.size; i++)
     particles[i].vel = add(particles[i].vel, scale(delta_t, particles[i].acc));
 }
 
-void computePos(particle_system system, int delta_t) {
-  particle *particles = system.particles;
-  for (int i = 0; i < system.size; i++) {
-    if (particles[i].pos.x !=
-        add(particles[i].pos, scale(delta_t, particles[i].vel)).x) {
-    }
-    particles[i].pos = add(particles[i].pos, scale(delta_t, particles[i].vel));
-  }
-}
+/*void computePos(particle_system system, int delta_t) {*/
+/*  particle *particles = system.particles;*/
+/*  for (int i = 0; i < system.size; i++) {*/
+/*    if (particles[i].pos.x !=*/
+/*        add(particles[i].pos, scale(delta_t, particles[i].vel)).x) {*/
+/*    }*/
+/*    particles[i].pos = add(particles[i].pos, scale(delta_t, particles[i].vel));*/
+/*  }*/
+/*}*/
 
+/**
+ * NOTE: I don't remember exactly why I named this `pp` and will likely refactor it in the future
+ *
+ * Updates a particle system to simulate n-bodies interacting through gravity, over
+ * a certain time step. 
+ *
+ * @param system  The system to update
+ * @param delta_t The time step
+ */
 void pp(particle_system system, int delta_t) {
-    update_positions_collisions(system, delta_t);
+  update_positions_collisions(system, delta_t);
   // computePos(system, delta_t);
   computeAcc(system);
   computeVel(system, delta_t);
