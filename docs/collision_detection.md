@@ -6,7 +6,7 @@ I invite you to look at the ['Elastic collision' Wikipedia page](https://en.wiki
 
 Right, we need to know *when* we should apply our physical formulas. Well we know our bodies are circles, so how about checking when they overlap, that should tell us if they are colliding.
 
-![](/home/clement/projects/n-body/docs/diagrams/1.svg)
+![](diagrams/1.svg)
 
 <p align="center"> 
     <svg width="375" height="182">
