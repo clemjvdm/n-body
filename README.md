@@ -1,6 +1,6 @@
 ## N-body Simulation
 
-An exploration of n-body simulations and related algorithms. I started this repository a little under a year ago (as of `02/01/2025`), and I feel I implemented some interesting algorithms and even came up with my own a priori continuous time collision detection algorithm. However I never documented it, but now I am looking to apply for masters I have a good incentive to do so :grin:. 
+An exploration of n-body simulations and related algorithms. I started this repository a little under a year ago (as of `02/01/2025`), and I feel I implemented some interesting algorithms and even came up with some fun solutions. However I never documented it, but now I am looking to apply for masters I have a good incentive to do so :grin:. 
 
 So the I will start documenting, cleaning up and maybe even extending the code. A list of things I am aiming to do and their progress can be found in the To-do section.
 
