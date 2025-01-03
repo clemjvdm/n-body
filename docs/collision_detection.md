@@ -6,6 +6,8 @@ I invite you to look at the ['Elastic collision' Wikipedia page](https://en.wiki
 
 Right, we need to know *when* we should apply our physical formulas. Well we know our bodies are circles, so how about checking when they overlap, that should tell us if they are colliding.
 
+![](/home/clement/projects/n-body/docs/diagrams/1.svg)
+
 <p align="center"> 
     <svg width="375" height="182">
         <text x="90" y="42" text-anchor="middle" font-family="&quot;Courier New&quot;">no collision</text>
@@ -18,9 +20,11 @@ Right, we need to know *when* we should apply our physical formulas. Well we kno
 </p>
 
 This is simple enough using the Pythagorean theorem. We can simply check if the distance between the two centers of the circles is smaller than the combined radii, if so we know we have a collision.
-$$
+
+```math
 (x_1-x_2)^2+(y_1-y_2)^2 \leq (r_1+r_2)^2
-$$
+```
+
 This method however, only checks for collisions after they happen (*a posteriori*). In the context of the simulation this is a bad thing.  The simulation updates with discrete time steps; at every time step a particles position is updated by adding it's velocity multiplied by the size of the time step $\Delta$ to it. For example, if at time $t_1$ a particle with position $(x,y)$ has a velocity of $5$ along the $x$ axis and $0$ along the $y$ axis, then with $\Delta = 1$ at $t_2$ we will have updated it's position to $(x+5,y+0)$.
 
 <p align="center"> 
@@ -123,13 +127,19 @@ First, we notice that if we multiply $v_1$ by some factor $0 < \Delta < |v_1|$ a
 </p>
 
 We also remember that the two circles will collide if $(x_1-x_2)^2+(y_1-y_2)^2 \leq (r_1+r_2)^2$. We can combine our knowledge of these two things to come up with the following equation.
-$$
+
+```math
 ((\Delta v_{x1}+x_1)-(\Delta v_{x2}+x_2))^2+((\Delta v_{y1}+y_1)-(\Delta v_{y2}+y_2))^2 \leq(r_1+r_2)^2
-$$
+```
+
 We could solve for $0 < \Delta < |v_1|$ to find out for which values of $\Delta$ we have a collision, but we are only interested in the first moment a collision happens. So we check when the left hand side of the equation equals the right hand side (instead of checking when it's less or equal to).
-$$
-((\Delta v_1+x_1)-(\Delta v_2+x_2))^2+((\Delta v_1+y_1)-(\Delta v_2+y_2))^2=(r_1+r_2)^2
-$$
+
+```math
+((\Delta v_{x1}+x_1)-(\Delta v_{x2}+x_2))^2+((\Delta v_{y1}+y_1)-(\Delta v_{y2}+y_2))^2 = (r_1+r_2)^2
+```
+
+
+
 And the smallest solution of this equation with $0 < \Delta < |v_1|$ will be what we are looking for.
 
 <p align="center"> 
