@@ -16,7 +16,8 @@ Finally you should be able to run it with `./nbody`.
 ### Documentation
 
 I've documented some interesting parts of the code through blog style markdown files, have a look 😄:
-    - [Collision Detection](./docs/collision_detection.md)
+
+- [Collision Detection](./docs/collision_detection.md)
 
 ### To-Do
 
