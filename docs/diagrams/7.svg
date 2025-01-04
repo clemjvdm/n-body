@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="255" height="242">
+   <defs>
+        <marker 
+            id="arrowhead" 
+            markerWidth="10" 
+            markerHeight="7" 
+            refX="9" 
+            refY="3.5" 
+            orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+        </marker>
+    </defs>
+    <line x1="60" y1="172" x2="129.4" y2="102.6" stroke="black" marker-end="url(#arrowhead)" />
+    <circle cx="60" cy="172" r="40" stroke="blue" fill="none" />
+    <circle cx="129.4" cy="102.6" r="40" stroke="blue" fill="none" stroke-dasharray="5,5" />
+    <circle cx="210" cy="112" r="40" stroke="red" fill="none" />
+</svg>

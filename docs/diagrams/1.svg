@@ -1,10 +1,19 @@
-<p align="center"> 
-    <svg width="375" height="182">
-        <text x="90" y="42" text-anchor="middle" font-family="&quot;Courier New&quot;">no collision</text>
-        <text x="295" y="42" text-anchor="middle" font-family="&quot;Courier New&quot;">collision</text>
-    	<circle cx="45" cy="100" r="40" stroke="red" fill="none" /> 
-        <circle cx="135" cy="100" r="40" stroke="blue" fill="none" />
-        <circle cx="260" cy="100" r="40" stroke="red" fill="none" /> 
-    	<circle cx="330" cy="100" r="40" stroke="blue" fill="none" />
-	</svg> 
-</p>
+<svg xmlns="http://www.w3.org/2000/svg" width="375" height="182">
+    <defs>
+        <marker 
+            id="arrowhead" 
+            markerWidth="10" 
+            markerHeight="7" 
+            refX="9" 
+            refY="3.5" 
+            orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+        </marker>
+    </defs>
+      <text x="90" y="42" text-anchor="middle" font-family="&quot;Courier New&quot;">no collision</text>
+      <text x="295" y="42" text-anchor="middle" font-family="&quot;Courier New&quot;">collision</text>
+    <circle cx="45" cy="100" r="40" stroke="red" fill="none" /> 
+      <circle cx="135" cy="100" r="40" stroke="blue" fill="none" />
+      <circle cx="260" cy="100" r="40" stroke="red" fill="none" /> 
+    <circle cx="330" cy="100" r="40" stroke="blue" fill="none" />
+</svg> 

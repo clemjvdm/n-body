@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="230" height="182">
+    <defs>
+        <marker 
+            id="arrowhead" 
+            markerWidth="10" 
+            markerHeight="7" 
+            refX="9" 
+            refY="3.5" 
+            orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+        </marker>
+    </defs>
+    <text x="45" y="42" text-anchor="middle" font-family="&quot;Courier New&quot;">t1</text>
+    <text x="185" y="42" text-anchor="middle" font-family="&quot;Courier New&quot;">t2</text>
+  <line x1="45" y1="100" x2="185" y2="100" stroke="black" marker-end="url(#arrowhead)" />
+  <circle cx="45" cy="100" r="40" stroke="blue" fill="none" /> 
+  <circle cx="185" cy="100" r="40" stroke="blue" fill="none" stroke-dasharray="5,5" />
+</svg> 
