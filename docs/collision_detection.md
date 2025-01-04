@@ -6,7 +6,7 @@ I invite you to look at the ['Elastic collision' Wikipedia page](https://en.wiki
 
 Right, we need to know *when* we should apply our physical formulas. Well we know our bodies are circles, so how about checking when they overlap, that should tell us if they are colliding.
 
-![alt](./diagrams/1.svg)
+<div align="center"><img src="./diagrams/1.svg" alt="alt" /></div>
 
 This is simple enough using the Pythagorean theorem. We can simply check if the distance between the two centers of the circles is smaller than the combined radii, if so we know we have a collision.
 
@@ -16,15 +16,15 @@ This is simple enough using the Pythagorean theorem. We can simply check if the 
 
 This method however, only checks for collisions after they happen (*a posteriori*). In the context of the simulation this is a bad thing.  The simulation updates with discrete time steps; at every time step a particles position is updated by adding it's velocity multiplied by the size of the time step $\Delta$ to it. For example, if at time $t_1$ a particle with position $(x,y)$ has a velocity of $5$ along the $x$ axis and $0$ along the $y$ axis, then with $\Delta = 1$ at $t_2$ we will have updated it's position to $(x+5,y+0)$.
 
-![alt](./diagrams/2.svg)
+<div align="center"><img src="./diagrams/2.svg" alt="alt" /></div>
 
 Maybe you can start seeing the problem. A particle could be moving fast enough such that between two time steps, it entirely jumps over another particle.
 
-![alt](./diagrams/3.svg)
+<div align="center"><img src="./diagrams/3.svg" alt="alt" /></div>
 
 In this scenario an a posteriori method of collision detection will fail to notice a collision did in fact happen. Of course we could just make the time steps smaller, for example with $\Delta = 0.25$ we would get the following:
 
-![alt](./diagrams/4.svg)
+<div align="center"><img src="./diagrams/4.svg" alt="alt" /></div>
 
 And here the circles do overlap so they would get detected by our a posteriori collision detection algorithm. But making smaller time steps is computationally expensive, as we'd have to go through all computations inversely as many times. So with $\Delta = 0.25$ we'd have to do many operations $4$ times instead of $1$. Yikes.
 
@@ -34,11 +34,11 @@ This usually means better accuracy and stability, but it comes at the cost of mo
 
 Suppose we have two circles with centers at $(x_1,y_1)$ and $(x_2, y_2)$ and radii $r_1$ and $r_2$, one is stationary whilst the other has a velocity vector $v_1$
 
-![alt](./diagrams/5.svg)
+<div align="center"><img src="./diagrams/5.svg" alt="alt" /></div>
 
 First, we notice that if we multiply $v_1$ by some factor $0 < \Delta < |v_1|$ and add it to the position the circle, we'd move it along the path of the velocity vector.
 
-![alt](./diagrams/6.svg)
+<div align="center"><img src="./diagrams/6.svg" alt="alt" /></div>
 
 We also remember that the two circles will collide if $(x_1-x_2)^2+(y_1-y_2)^2 \leq (r_1+r_2)^2$. We can combine our knowledge of these two things to come up with the following equation.
 
@@ -56,7 +56,7 @@ We could solve for $0 < \Delta < |v_1|$ to find out for which values of $\Delta$
 
 And the smallest solution of this equation with $0 < \Delta < |v_1|$ will be what we are looking for.
 
-![alt](./diagrams/7.svg)
+<div align="center"><img src="./diagrams/7.svg" alt="alt" /></div>
 
 Wonderful! In order to implement this in code we isolate $\Delta$, which will result in the following equation:
 ```c
