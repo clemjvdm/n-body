@@ -28,9 +28,11 @@ In this scenario an a posteriori method of collision detection will fail to noti
 
 And here the circles do overlap so they would get detected by our a posteriori collision detection algorithm. But making smaller time steps is computationally expensive, as we'd have to go through all computations inversely as many times. So with $\Delta = 0.25$ we'd have to do many operations $4$ times instead of $1$. Yikes.
 
-Despite these limitations many large n-body simulations use a posteriori collision detection because they don't require strong accuracy for collisions and can hence afford rather large time steps. In such a scenario the method tends to be computationally efficient. The alternative is *a priori collision* detection, such collision detection uses typically complex algorithms to predict the exact point at which two bodies will collide. 
+Despite these limitations many large n-body simulations use a posteriori collision detection because they don't require strong accuracy for collisions and can hence afford rather large time steps. In such a scenario the method tends to be computationally efficient. 
 
-This usually means better accuracy and stability, but it comes at the cost of more complexity which can in term also mean less computational efficiency. What is likely the most popular and best a priori collision detection method is described [here](https://programmerart.weebly.com/separating-axis-theorem.html). However, I attempted to find such a method without consulting the interned and stumbled upon a simpler solution which only works for circles (ideal for this simulation).
+The alternative is *a priori collision* detection, such collision detection uses typically complex algorithms to predict the exact point at which two bodies will collide. This means better accuracy and stability, but it comes at the cost of more complexity which can in term also mean less computational efficiency. 
+
+What is likely the most popular and best a priori collision detection method is described [here](https://programmerart.weebly.com/separating-axis-theorem.html). However, I attempted to find such a method without consulting the interned and stumbled upon a simpler solution which only works for circles (ok for this simulation).
 
 Suppose we have two circles with centers at $(x_1,y_1)$ and $(x_2, y_2)$ and radii $r_1$ and $r_2$, one is stationary whilst the other has a velocity vector $v_1$
 
@@ -40,16 +42,18 @@ First, we notice that if we multiply $v_1$ by some factor $0 < t < |v_1|$ and ad
 
 <div align="center"><img src="./diagrams/6.svg" alt="alt" /></div>
 
-We also remember that the two circles will collide if $(x_1-x_2)^2+(y_1-y_2)^2 \leq (r_1+r_2)^2$. We can combine our knowledge of these two things to come up with the following equation.
+We also remember that the two circles will collide if $(x_1-x_2)^2+(y_1-y_2)^2 \leq (r_1+r_2)^2$. Now let's add the matching velocity vector multiplied by some factor $t$ to each coordinate in this equation ($x_1$, $x_2$, $y_1$, $y_2$): 
 
 ```math
-((t v_{x1}+x_1)-(t v_{x2}+x_2))^2+((t v_{y1}+y_1)-(t v_{y2}+y_2))^2 \leq(r_1+r_2)^2
+(\colorbox{skyblue}{$t v_{x1}$}+x_1-\colorbox{skyblue}{$t v_{x2}$}+x_2)^2+(\colorbox{skyblue}{$t v_{y1}$}+y_1-\colorbox{skyblue}{$t v_{y2}$}+y_2)^2 \leq(r_1+r_2)^2
 ```
 
-We could solve for $0 < t < |v_1|$ to find out for which values of $t$ we have a collision, but we are only interested in the first moment a collision happens. So we check when the left hand side of the equation equals the right hand side (instead of checking when it's less or equal to).
+Now with $0 < t < |v_1|$ we have an equation which looks at whether two circles collide at any point on their velocity vectors.
+
+All that's left to do is to solve for $t$ to find out at which point along each circle's velocity vector the circles collide. However, we are only interested in the first moment a collision happens. So we check when the left hand side of the equation equals the right hand side.
 
 ```math
-((t v_{x1}+x_1)-(t v_{x2}+x_2))^2+((t v_{y1}+y_1)-(t v_{y2}+y_2))^2 = (r_1+r_2)^2
+(t v_{x1}+x_1-t v_{x2}+x_2)^2+(t v_{y1}+y_1-t v_{y2}+y_2)^2 \colorbox{skyblue}{=}(r_1+r_2)^2
 ```
 
 
@@ -58,6 +62,6 @@ And the smallest solution of this equation with $0 < t < |v_1|$ will be what we 
 
 <div align="center"><img src="./diagrams/7.svg" alt="alt" /></div>
 
-Great! Now we can isolate $t$ and we will be left with a quadratic equation, which is honestly pretty huge and there wouldn't be much point in me showing it here, so uhh... exercise for the reader I guess! You can always read the code to see the solution :wink:. Using the quadratic formula and the discriminant we can tell if and when the bodies collide.
+Great! Of course you might be wondering how to isolate $t$, but this is not all that interesting and a little bit big for this document, so uhh... exercise for the reader I guess! You can find the end result in the code :wink:. 
 
-With this method we can accurately tell when bodies will collide and create a stable  
+You may have noticed that our equation is just a quadratic formula, which means we can use the discriminant to establish whether or not two bodies collide.
