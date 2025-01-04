@@ -36,45 +36,28 @@ Suppose we have two circles with centers at $(x_1,y_1)$ and $(x_2, y_2)$ and rad
 
 <div align="center"><img src="./diagrams/5.svg" alt="alt" /></div>
 
-First, we notice that if we multiply $v_1$ by some factor $0 < \Delta < |v_1|$ and add it to the position the circle, we'd move it along the path of the velocity vector.
+First, we notice that if we multiply $v_1$ by some factor $0 < t < |v_1|$ and add it to the position the circle, we'd move it along the path of the velocity vector.
 
 <div align="center"><img src="./diagrams/6.svg" alt="alt" /></div>
 
 We also remember that the two circles will collide if $(x_1-x_2)^2+(y_1-y_2)^2 \leq (r_1+r_2)^2$. We can combine our knowledge of these two things to come up with the following equation.
 
 ```math
-((\Delta v_{x1}+x_1)-(\Delta v_{x2}+x_2))^2+((\Delta v_{y1}+y_1)-(\Delta v_{y2}+y_2))^2 \leq(r_1+r_2)^2
+((t v_{x1}+x_1)-(t v_{x2}+x_2))^2+((t v_{y1}+y_1)-(t v_{y2}+y_2))^2 \leq(r_1+r_2)^2
 ```
 
-We could solve for $0 < \Delta < |v_1|$ to find out for which values of $\Delta$ we have a collision, but we are only interested in the first moment a collision happens. So we check when the left hand side of the equation equals the right hand side (instead of checking when it's less or equal to).
+We could solve for $0 < t < |v_1|$ to find out for which values of $t$ we have a collision, but we are only interested in the first moment a collision happens. So we check when the left hand side of the equation equals the right hand side (instead of checking when it's less or equal to).
 
 ```math
-((\Delta v_{x1}+x_1)-(\Delta v_{x2}+x_2))^2+((\Delta v_{y1}+y_1)-(\Delta v_{y2}+y_2))^2 = (r_1+r_2)^2
+((t v_{x1}+x_1)-(t v_{x2}+x_2))^2+((t v_{y1}+y_1)-(t v_{y2}+y_2))^2 = (r_1+r_2)^2
 ```
 
 
 
-And the smallest solution of this equation with $0 < \Delta < |v_1|$ will be what we are looking for.
+And the smallest solution of this equation with $0 < t < |v_1|$ will be what we are looking for.
 
 <div align="center"><img src="./diagrams/7.svg" alt="alt" /></div>
 
-Wonderful! In order to implement this in code we isolate $\Delta$, which will result in the following equation:
-```c
-    double a = (p1.x * p1.x) + (p2.x * p2.x) - 2 * p1.x * p2.x;
-    double b = (p1.y * p1.y) + (p2.y * p2.y) - 2 * p1.y * p2.y;
-    double c = (p1.x - p2.x) * (v1.x - v2.x) + (p1.y - p2.y) * (v1.y - v2.y);
-    double d = (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y);
-    double e = a + b - r1 * r1 - r2 * r2 - 2 * r1 * r2;
-    double delta = 4 * (c * c) - 4 * d * e;
+Great! Now we can isolate $t$ and we will be left with a quadratic equation, which is honestly pretty huge and there wouldn't be much point in me showing it here, so uhh... exercise for the reader I guess! You can always read the code to see the solution :wink:. Using the quadratic formula and the discriminant we can tell if and when the bodies collide.
 
-    if (delta == 0) {
-        return -1 * (c/d);
-    }
-
-    if (delta > 0) {
-        return (-2 * c - sqrt(4 * (c * c) - 4 * d * e)) / (2 * d);
-    }
-
-    return -1;
-}
-```
+With this method we can accurately tell when bodies will collide and create a stable  
