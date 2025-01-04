@@ -6,8 +6,6 @@ I invite you to look at the ['Elastic collision' Wikipedia page](https://en.wiki
 
 Right, we need to know *when* we should apply our physical formulas. Well we know our bodies are circles, so how about checking when they overlap, that should tell us if they are colliding.
 
-![](diagrams/1.svg)
-
 <p align="center"> 
     <svg width="375" height="182">
         <text x="90" y="42" text-anchor="middle" font-family="&quot;Courier New&quot;">no collision</text>
@@ -36,17 +34,6 @@ This method however, only checks for collisions after they happen (*a posteriori
         <circle cx="185" cy="100" r="40" stroke="blue" fill="none" stroke-dasharray="5,5" />
 	</svg> 
 </p>
-
-<svg viewBox="0 0 375 150">
-    <circle cx="100" cy="75" r="40" stroke="blue" fill="none" />
-    <line x1="100" y1="75" x2="275" y2="75" stroke="black" marker-end="url(#arrowhead)" />
-    <circle cx="275" cy="75" r="40" stroke="blue" fill="none" stroke-dasharray="5,5" />
-    <defs>
-        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="black" />
-        </marker>
-    </defs>
-</svg>
 
 Maybe you can start seeing the problem. A particle could be moving fast enough such that between two time steps, it entirely jumps over another particle.
 
@@ -78,7 +65,7 @@ And here the circles do overlap so they would get detected by our a posteriori c
 
 Despite these limitations many large n-body simulations use a posteriori collision detection because they don't require strong accuracy for collisions and can hence afford rather large time steps. In such a scenario the method tends to be computationally efficient. The alternative is *a priori collision* detection, such collision detection uses typically complex algorithms to predict the exact point at which two bodies will collide. 
 
-This usually means better accuracy and stability, but it comes at the cost of more complexity which can in term also mean less computational efficiency. What is likely the most popular and best a priori collision detection method is described [here](https://programmerart.weebly.com/separating-axis-theorem.html). However, while I attempted to find such a method without consulting the internet, I stumbled upon a simpler solution which only works for circles (ideal for this simulation).
+This usually means better accuracy and stability, but it comes at the cost of more complexity which can in term also mean less computational efficiency. What is likely the most popular and best a priori collision detection method is described [here](https://programmerart.weebly.com/separating-axis-theorem.html). However, I attempted to find such a method without consulting the interned and stumbled upon a simpler solution which only works for circles (ideal for this simulation).
 
 Suppose we have two circles with centers at $(x_1,y_1)$ and $(x_2, y_2)$ and radii $r_1$ and $r_2$, one is stationary whilst the other has a velocity vector $v_1$
 
