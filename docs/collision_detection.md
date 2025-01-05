@@ -45,7 +45,7 @@ First, we notice that if we multiply $v_1$ by some factor $0 < t < |v_1|$ and ad
 We also remember that the two circles will collide if $(x_1-x_2)^2+(y_1-y_2)^2 \leq (r_1+r_2)^2$. Now let's add the matching velocity vector multiplied by some factor $t$ to each coordinate in this equation ($x_1$, $x_2$, $y_1$, $y_2$): 
 
 ```math
-(\colorbox{skyblue}{$t v_{x1}$}+x_1-\colorbox{skyblue}{$t v_{x2}$}+x_2)^2+(\colorbox{skyblue}{$t v_{y1}$}+y_1-\colorbox{skyblue}{$t v_{y2}$}+y_2)^2 \leq(r_1+r_2)^2
+(t v_{x1}+x_1-t v_{x2}+x_2)^2+(t v_{y1}+y_1-t v_{y2}+y_2)^2 \leq(r_1+r_2)^2
 ```
 
 Now with $0 < t < |v_1|$ we have an equation which looks at whether two circles collide at any point on their velocity vectors.
@@ -53,7 +53,7 @@ Now with $0 < t < |v_1|$ we have an equation which looks at whether two circles 
 All that's left to do is to solve for $t$ to find out at which point along each circle's velocity vector the circles collide. However, we are only interested in the first moment a collision happens. So we check when the left hand side of the equation equals the right hand side.
 
 ```math
-(t v_{x1}+x_1-t v_{x2}+x_2)^2+(t v_{y1}+y_1-t v_{y2}+y_2)^2 \colorbox{skyblue}{=}(r_1+r_2)^2
+(t v_{x1}+x_1-t v_{x2}+x_2)^2+(t v_{y1}+y_1-t v_{y2}+y_2)^2 = (r_1+r_2)^2
 ```
 
 
