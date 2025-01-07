@@ -236,13 +236,34 @@ void remove_intersections(particle_system *system) {
             particle b = system->particles[j];
             if (sqrt(((a.pos.x - b.pos.x)*(a.pos.x - b.pos.x)) + 
                      ((a.pos.y - b.pos.y)*(a.pos.y - b.pos.y))) <= a.radius + b.radius) {
-                printf("particle removed\n");
                 remove_particle(system, j);
             }
         }
     }
 }
 
+/**
+ * Applies collision response to two colliding particles. Does so by updating
+ * both their velocities.
+ *
+ * @param a The first particle
+ * @param b The second particle
+ *
+ * @note The particles must be at their TOC.
+ */
+void collision_response(particle *a, particle *b) {
+  double d = sqrt((a->pos.x - b->pos.x)*(a->pos.x - b->pos.x)+(a->pos.y - b->pos.y)*(a->pos.y - b->pos.y));
+  double nx = (b->pos.x-a->pos.x)/d;
+  double ny = (b->pos.y-a->pos.y)/d;
+  double p = 2*(a->vel.x*nx + a->vel.y*ny - b->vel.x*nx - b->vel.y*ny)/(a->mass+b->mass);
+  vector v1 = new_vector(a->vel.x - p*a->mass*nx, a->vel.y - p*a->mass*ny);
+  vector v2 = new_vector(b->vel.x + p*b->mass*nx, b->vel.y + p*b->mass*ny);
+
+  a->vel = v1;
+  b->vel = v2;
+
+  return;
+}
 
 /**
  * Update the positions of particles within a system, taking collisions
@@ -281,15 +302,17 @@ void update_positions_collisions(particle_system system, int delta_t) {
         delta_t = delta_t - min_p; // compute the new delta_t (amount of time left in the jump)
 
         // update velocities for colliding particles
-        vector temp = system.particles[min_i].vel;
-        system.particles[min_i].vel = system.particles[min_j].vel;
-        system.particles[min_j].vel = temp;
+        //vector temp = system.particles[min_i].vel;
+        //system.particles[min_i].vel = system.particles[min_j].vel;
+        //system.particles[min_j].vel = temp;
+        collision_response(&system.particles[min_i], &system.particles[min_j]);       
         //
         update_positions_collisions(system, delta_t); // recusively call this function with new detla_t
     } else {
         update_positions(system, delta_t);
     }
 }
+
 
 /**
  * Resolves the collisions within a system using an a priori method.

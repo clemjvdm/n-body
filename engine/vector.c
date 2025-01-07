@@ -9,7 +9,7 @@
  * @param y The y-component of the vector
  * @return A new vector with the specified components
  */
-vector newVector(double x, double y) {
+vector new_vector(double x, double y) {
   vector v = {x, y};
   return v;
 }

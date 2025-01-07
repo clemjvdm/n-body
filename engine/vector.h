@@ -5,7 +5,7 @@ typedef struct {
   double x, y;
 } vector;
 
-vector newVector(double x, double y);
+vector new_vector(double x, double y);
 vector add(vector a, vector b);
 vector sub(vector a, vector b);
 vector scale(double x, vector a);
