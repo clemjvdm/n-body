@@ -1,4 +1,6 @@
 #include "graphics/graphic_utils.h"
+#include "engine/simulation.h"
+#include "engine/system.h"
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_render.h>
 #ifdef _WIN32
@@ -7,9 +9,9 @@
 #include <SDL2/SDL.h>
 #endif
 
-#include "engine/nbody.h"
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
+#define VEC_DRAW_SCALE 1000
 
 /**
  * Draws a particle on the screen as a filled circle relative to the center of the window.
@@ -21,8 +23,15 @@
  * @note Y-coordinate is inverted (negative y moves up)
  */
 void drawParticle(SDL_Renderer *renderer, particle p) {
+  int cx = (int)p.pos.x + (int)WINDOW_WIDTH / 2;
+  int cy = -(int)p.pos.y + (int)WINDOW_HEIGHT / 2;
+  int vx = (int)(p.pos.x + p.vel.x*VEC_DRAW_SCALE) + (int)WINDOW_WIDTH / 2;
+  int vy = -(int)(p.pos.y +p.vel.y*VEC_DRAW_SCALE) + (int)WINDOW_HEIGHT / 2;
   circleFill(renderer, (int)p.pos.x + (int)WINDOW_WIDTH / 2,
              -(int)p.pos.y + (int)WINDOW_HEIGHT / 2, p.radius);
+  //SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+  //SDL_RenderDrawLine(renderer, cx, cy, vx, vy);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 int main(void) {
@@ -38,9 +47,8 @@ int main(void) {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  particle_system system = createSystem(200, 0.00001);
-  // particle_system system = openSystem("system.txt");
-  initSystem(system, 800);
+  particle_system system = create_system(100, 0.0001);
+  init_system(system, 400);
     remove_intersections(&system);
     printf("size: %zu\n", system.size);
 
@@ -60,10 +68,8 @@ int main(void) {
     SDL_RenderPresent(renderer);
 
     // update logic
-    updateSystem(system, 15, PP);
+    step_system(system, (sim_config){5, 0.000001, 1});
   }
-
-  saveSystem(system, "system_saved.txt");
 
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

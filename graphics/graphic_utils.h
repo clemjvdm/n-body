@@ -1,7 +1,6 @@
 #ifndef GRAPHIC_UTILS_H
 #define GRAPHIC_UTILS_H
 
-#include "../engine/nbody.h"
 #include <SDL2/SDL_render.h>
 
 #ifdef _WIN32
