@@ -21,7 +21,5 @@ particle_system open_system(char *filename);
 void save_system(particle_system s, char *filename);
 particle_system create_system(size_t particle_count, float grav_const);
 void init_system(particle_system s, int radius);
-void remove_intersections(particle_system *system);
-void remove_particle(particle_system *system, int particle_index);
 
 #endif

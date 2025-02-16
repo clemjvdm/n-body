@@ -9,8 +9,8 @@
 #include <SDL2/SDL.h>
 #endif
 
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
+#define WINDOW_WIDTH 900
+#define WINDOW_HEIGHT 900
 #define VEC_DRAW_SCALE 1000
 
 /**
@@ -47,10 +47,7 @@ int main(void) {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  particle_system system = create_system(100, 0.0001);
-  init_system(system, 400);
-    remove_intersections(&system);
-    printf("size: %zu\n", system.size);
+  particle_system system = open_system("./system");
 
   while (1) {
     // handle quit
